@@ -68,3 +68,69 @@ txid = client.wallet.send(account_id, [{"address": addrs["ua"], "amount": "0.1"}
 Original code: see LICENSE (preserved from upstream project)
 Zcash enhancements: MIT (see zcash-enhancements/LICENSE)
 See NOTICE for full attribution.
+
+## How to Test
+
+### 1. Verify the wrapper loads
+
+```bash
+git clone https://github.com/Michae2xl/python-bitcoinrpc-zcash.git
+cd python-bitcoinrpc-zcash/zcash-enhancements
+python3 -c "from zcash_rpc import ZcashClient; print('Wrapper OK')"
+```
+
+This confirms the ZcashClient wrapper (ZebraRPC + ZkoolWallet) imports correctly. No node required for this step.
+
+### 2. Test against a live Zcash node
+
+If you have zebrad running:
+
+```bash
+cd zcash-enhancements
+python3 -c "
+from zcash_rpc import ZcashClient
+c = ZcashClient(zebra_host='127.0.0.1', zebra_port=8232)
+info = c.chain.getblockchaininfo()
+print(f'Chain: {info[\"chain\"]}net, Block: {info[\"blocks\"]}')
+"
+```
+
+### 3. Test wallet operations (requires zkool)
+
+If you have zebrad + zkool running:
+
+```bash
+python3 -c "
+from zcash_rpc import ZcashClient
+c = ZcashClient(zebra_host='127.0.0.1', zebra_port=8232, zkool_host='127.0.0.1', zkool_port=8000)
+
+# Chain
+info = c.chain.getblockchaininfo()
+print(f'Block: {info[\"blocks\"]}')
+
+# Wallet
+bal = c.wallet.get_balance(1)
+print(f'Balance: {bal}')
+"
+```
+
+### 4. Run your own migration
+
+Want to migrate a different Bitcoin project? Use the migration tool:
+
+```bash
+git clone https://github.com/Michae2xl/zcash-migrate.git
+cd zcash-migrate
+npm install
+npm run dev
+# Open http://localhost:3000 and paste any Bitcoin GitHub repo
+```
+
+### Node Setup
+
+| Service | Install | Purpose |
+|---------|---------|---------|
+| [zebrad](https://github.com/ZcashFoundation/zebra) | `cargo install --locked --git https://github.com/ZcashFoundation/zebra zebrad` | Chain data |
+| [zkool](https://github.com/hhanh00/zkool2) | `cargo install --locked --git https://github.com/hhanh00/zkool2 --features=graphql zkool_graphql` | Wallet (Orchard/Halo2) |
+
+Testnet faucet: https://testnet.zecfaucet.com/
