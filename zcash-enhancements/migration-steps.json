@@ -1,0 +1,28 @@
+[
+  {
+    "id": "setup-import",
+    "file": "(project entry point)",
+    "line": 0,
+    "category": "import",
+    "severity": "required",
+    "title": "Add ZcashClient import",
+    "description": "Import the generated ZcashClient at the top of your main module.",
+    "beforeCode": "from bitcoin.rpc import RawProxy\nproxy = RawProxy(port=18332)",
+    "afterCode": "from zcash_rpc import ZcashClient\nclient = ZcashClient(zebra_port=8232, zkool_port=8000)\n# account_id = client.wallet.create_account(\"main\", seed, pools=7)",
+    "notes": "This replaces the Bitcoin RPC connection with ZcashClient (zebrad + zkool).",
+    "autoApplicable": false
+  },
+  {
+    "id": "setup-config",
+    "file": ".env",
+    "line": 0,
+    "category": "config",
+    "severity": "required",
+    "title": "Configure Zcash node connection",
+    "description": "Set zebrad and zkool connection details.",
+    "beforeCode": "# No Zcash config exists",
+    "afterCode": "ZEBRA_HOST=127.0.0.1\nZEBRA_PORT=8232\nZKOOL_HOST=127.0.0.1\nZKOOL_PORT=8000",
+    "notes": "Adjust host/port if your nodes are remote. zebrad = chain data, zkool = wallet operations.",
+    "autoApplicable": true
+  }
+]
